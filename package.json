@@ -47,6 +47,8 @@
         "express": "^4.17.1",
         "firebase": "^8.9.1",
         "install": "^0.13.0",
+        "material-ui-chip-input": "^1.1.0",
+        "moment": "^2.29.1",
         "npm": "^7.20.6",
         "prop-types": "^15.7.2",
         "react": "^17.0.2",

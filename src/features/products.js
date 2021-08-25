@@ -4,7 +4,7 @@ import firebase from '../firebase'
 const initialState = {
     products: [],
     productsLoading: false,
-    productDelete: false,
+    
 }
 
 export const productsSlice = createSlice({
@@ -15,12 +15,20 @@ export const productsSlice = createSlice({
             state.productsLoading = true;
         },
         getProducts: (state, action) => {
-            state.products.push(action.payload);
+            state.products.push(action.payload)
             state.productsLoading = false;
         },
         getProductsFailure: (state) => {
             state.productsLoading = false;
         },
+        deleting:(state, action) => {
+            let index = state.products.findIndex(product => product.productName === action.payload);
+            state.products.splice(index, 1);
+        },
+        clear: (state) => {
+            Object.assign(state, initialState);
+        }
+        
     }
 })
 
@@ -29,7 +37,9 @@ export const productsSelector = (state) => state.products;
 export const {
     productsIsLoading,
     getProducts,
-    getProductsFailure
+    getProductsFailure,
+    deleting,
+    clear
 } = productsSlice.actions;
 
 export default productsSlice.reducer;
@@ -53,5 +63,17 @@ export function fetchProducts() {
             dispatch(getProducts(doc.data()))
           });
 
+    }
+}
+
+export function clearProducts () {
+    return (dispatch) => {
+        dispatch(clear());
+    }
+}
+
+export function deleteProducts(name) {
+    return (dispatch) => {
+        dispatch(deleting(name))
     }
 }

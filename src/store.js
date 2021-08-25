@@ -5,7 +5,7 @@ import productsReducer from './features/products'
 export const store = configureStore({
   reducer: {
       user: userReducer,
-      products: productsReducer
+      products: productsReducer,
   },
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({

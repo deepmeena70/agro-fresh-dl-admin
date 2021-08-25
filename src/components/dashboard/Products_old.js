@@ -27,8 +27,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchProducts, productsSelector} from '../../features/products'
 
 function createData(productName, image, fruit, vegetable, exotic,regular,bulk,quantity,sellingPrice, discountPrice, created, modified) {
-  return { productName, image, fruit, vegetable, exotic,regular,bulk,quantity,sellingPrice, discountPrice, created, modified };
-}
+    return { productName, image, fruit, vegetable, exotic,regular,bulk,quantity,sellingPrice, discountPrice, created, modified };
+  }
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -57,16 +58,15 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'productName', numeric: false, disablePadding: true, label: 'Product Name' },
-  { id: 'image', numeric: true, disablePadding: false, label: 'Image' },
-  { id: 'category', numeric: true, disablePadding: false, label: 'Category' },
-  { id: 'orderType', numeric: true, disablePadding: false, label: 'Order Type' },
-  { id: 'quantity', numeric: true, disablePadding: false, label: 'Quantity (kg)' },
-  { id: 'sellingPrice', numeric: true, disablePadding: false, label: 'Selling Price (₹/kg)' },
-  { id: 'discountPrice', numeric: true, disablePadding: false, label: 'Discount Price (₹/kg)' },
-  { id: 'created', numeric: true, disablePadding: false, label: 'Created' },
-  { id: 'modified', numeric: true, disablePadding: false, label: 'Modified' },
-  
+    { id: 'productName', numeric: false, disablePadding: true, label: 'Product Name' },
+    { id: 'image', numeric: true, disablePadding: false, label: 'Image' },
+    { id: 'category', numeric: true, disablePadding: false, label: 'Category' },
+    { id: 'orderType', numeric: true, disablePadding: false, label: 'Order Type' },
+    { id: 'quantity', numeric: true, disablePadding: false, label: 'Quantity (kg)' },
+    { id: 'sellingPrice', numeric: true, disablePadding: false, label: 'Selling Price (₹/kg)' },
+    { id: 'discountPrice', numeric: true, disablePadding: false, label: 'Discount Price (₹/kg)' },
+    { id: 'created', numeric: true, disablePadding: false, label: 'Created' },
+    { id: 'modified', numeric: true, disablePadding: false, label: 'Modified' },
 ];
 
 function EnhancedTableHead(props) {
@@ -83,7 +83,7 @@ function EnhancedTableHead(props) {
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all products' }}
+            inputProps={{ 'aria-label': 'select all desserts' }}
           />
         </TableCell>
         {headCells.map((headCell) => (
@@ -144,10 +144,15 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected, name } = props;
+  const { numSelected, nameSelected, products } = props;
+
 
   const handleDelete = () => {
-    console.log(name)  }
+    console.log('selected name', '=>', nameSelected);
+    nameSelected.forEach(name=> {
+        console.log(name)
+    })
+  }
 
   return (
     <Toolbar
@@ -161,7 +166,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Products
+          Nutrition
         </Typography>
       )}
 
@@ -210,109 +215,92 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
 export default function Products() {
-  const classes = useStyles();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const rows = [];
-
-  const fillRows = (products) => {
-    products.forEach((product) =>{
-      rows.push(createData(
+    const classes = useStyles();
+    const [order, setOrder] = React.useState('asc');
+    const [orderBy, setOrderBy] = React.useState('calories');
+    const [selected, setSelected] = React.useState([]);
+    const [page, setPage] = React.useState(0);
+    const [dense, setDense] = React.useState(false);
+    const [productsPerPage, setproductsPerPage] = React.useState(5);
   
-          product.productName,
-          product.imageURL,
-          product.fruit,
-          product.vegetable,
-          product.exotic,
-          product.regular,
-          product.bulk,
-          product.quantity,
-          product.sellingPrice,
-          product.discountPrice,
-          product.created,
-          product.modified
-          ))
-    })
-  }
-
-  const dispatch = useDispatch();
-
-  const {products, productsLoading } = useSelector(productsSelector);
-
-  console.log(products, productsLoading)
-
-  useEffect(() => {
-      dispatch(fetchProducts())
-  }, [dispatch])
-
+    const dispatch = useDispatch();
   
-  fillRows(products);
- 
- 
+    const {products, productsLoading } = useSelector(productsSelector);
+  
+    console.log(products, productsLoading)
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.productName);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    console.log(name)
+    console.log('products from products =>',products)
     
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
+    useEffect(() => {
+        dispatch(fetchProducts())
+    }, [dispatch])
+
+    const handleRequestSort = (event, property) => {
+        const isAsc = orderBy === property && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
+        setOrderBy(property);
+    };
+
+    const handleSelectAllClick = (event) => {
+        if (event.target.checked) {
+        const newSelecteds = products.map((n) => n.name);
+        setSelected(newSelecteds);
+        return;
+        }
+        setSelected([]);
+    };
+
+    const handleClick = (event, name) => {
+        const selectedIndex = selected.indexOf(name);
+        let newSelected = [];
+
+        if (selectedIndex === -1) {
+        newSelected = newSelected.concat(selected, name);
+        } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+        newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+        newSelected = newSelected.concat(
+            selected.slice(0, selectedIndex),
+            selected.slice(selectedIndex + 1),
+        );
+        }
+
+        setSelected(newSelected);
+    };
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeproductsPerPage = (event) => {
+        setproductsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const handleChangeDense = (event) => {
+        setDense(event.target.checked);
+    };
+
+    const isSelected = (name) => selected.indexOf(name) !== -1;
+    console.log("selected",'->',selected)
+
+    const emptyproducts = productsPerPage - Math.min(productsPerPage, products.length - page * productsPerPage);
+
+    const time = (seconds, nanoseconds) => {
+        let totalTime = (seconds+nanoseconds*0.00000001)*1000;
+        return new Date(totalTime).toLocaleTimeString();
     }
-  };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
-  return (
-    <div className={classes.root}>
+    return (
+        <div className={classes.root}>
         <NewProduct />
         <Paper className={classes.paper}>
-            <EnhancedTableToolbar numSelected={selected.length}  />
+            <EnhancedTableToolbar numSelected={selected.length} nameSelected={selected} products={products}/>
             <TableContainer>
             <Table
                 className={classes.table}
@@ -327,65 +315,65 @@ export default function Products() {
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                rowCount={products.length}
                 />
                 <TableBody>
-                {stableSort(rows, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                {stableSort(products, getComparator(order, orderBy))
+                    .slice(page * productsPerPage, page * productsPerPage + productsPerPage)
                     .map((row, index) => {
                     const isItemSelected = isSelected(row.productName);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                         <TableRow
-                        hover
-                        onClick={(event) => handleClick(event, row.productName)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.productName}
-                        selected={isItemSelected}
-                        >
-                        <TableCell padding="checkbox">
-                            <Checkbox
-                            checked={isItemSelected}
-                            inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                        </TableCell>
-                        <TableCell component="th" id={labelId} scope="row" padding="none">
-                            {row.productName}
-                        </TableCell>
-                        <TableCell align="right">
-                          <img src={row.image} style={{ width:80 }}/>
-                        </TableCell>
-                        <TableCell align="right">
-                          {row.fruit && 'Fruit'}
-                          {row.vegetable && 'Vegetable'}
-                          {row.exotic && 'Exotic'}
-                        </TableCell>
-                        <TableCell align="right">
-                          {row.bulk ? 'Bulk' : 'Regular'}
-                        </TableCell>
-                        <TableCell align="right">
-                          {row.quantity === 0 ? 'Out of Stock' : row.quantity}
-                        </TableCell>
-                        <TableCell align="right">
-                          {row.sellingPrice}
-                        </TableCell>
-                        <TableCell align="right">
-                          {row.discountPrice}
-                        </TableCell>
-                        <TableCell align="right">
-                          {row.created.seconds}
-                        </TableCell>
-                        <TableCell align="right">
-                          {row.modified.seconds}
-                        </TableCell>
+                            hover
+                            onClick={(event) => handleClick(event, row.productName)}
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={row.productName}
+                            selected={isItemSelected}
+                            >
+                            <TableCell padding="checkbox">
+                                <Checkbox
+                                checked={isItemSelected}
+                                inputProps={{ 'aria-labelledby': labelId }}
+                                />
+                            </TableCell>
+                            <TableCell component="th" id={labelId} scope="row" padding="none">
+                                {row.productName}
+                            </TableCell>
+                            <TableCell align="right">
+                            <img src={row.imageURL} style={{ width:80 }}/>
+                            </TableCell>
+                            <TableCell align="right">
+                            {row.fruit && 'Fruit'}
+                            {row.vegetable && 'Vegetable'}
+                            {row.exotic && 'Exotic'}
+                            </TableCell>
+                            <TableCell align="right">
+                            {row.bulk ? 'Bulk' : 'Regular'}
+                            </TableCell>
+                            <TableCell align="right">
+                            {row.quantity === 0 ? 'Out of Stock' : row.quantity}
+                            </TableCell>
+                            <TableCell align="right">
+                            {row.sellingPrice}
+                            </TableCell>
+                            <TableCell align="right">
+                            {row.discountPrice}
+                            </TableCell>
+                            <TableCell align="right">
+                            {time(row.created.seconds, row.created.nanoseconds)}
+                            </TableCell>
+                            <TableCell align="right">
+                            {time(row.modified.seconds, row.modified.nanoseconds)}
+                            </TableCell>
                         </TableRow>
                     );
                     })}
-                {emptyRows > 0 && (
-                    <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                {emptyproducts > 0 && (
+                    <TableRow style={{ height: (dense ? 33 : 53) * emptyproducts }}>
                     <TableCell colSpan={6} />
                     </TableRow>
                 )}
@@ -393,20 +381,19 @@ export default function Products() {
             </Table>
             </TableContainer>
             <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            productsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
+            count={products.length}
+            productsPerPage={productsPerPage}
             page={page}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            onproductsPerPageChange={handleChangeproductsPerPage}
             />
         </Paper>
         <FormControlLabel
             control={<Switch checked={dense} onChange={handleChangeDense} />}
             label="Dense padding"
         />
-    </div>
-  );
+        </div>
+    );
 }
-

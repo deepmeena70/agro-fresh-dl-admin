@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
@@ -8,8 +8,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import ChipInput from 'material-ui-chip-input'
+
 
 import firebase from '../../firebase'
+
 
 function getModalStyle() {
   const top = 50 ;
@@ -36,6 +39,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const chipArray = [];
+
 export default function NewProduct() {
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
@@ -56,6 +61,7 @@ export default function NewProduct() {
   const [imageURL, setImageURL] = useState('')
   const [imageUploading, setImageUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
+  const [packageOf, setPackageOf] = useState([]);
 
 
   const handleOpen = () => {
@@ -101,6 +107,26 @@ export default function NewProduct() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const chipValue = () => {
+    return packageOf;
+  }
+
+  useEffect(() => {
+    setPackageOf(chipArray);
+  })
+
+  const handleAddChip = (chip) => {
+    console.log('chip data =>', chip);
+    console.log('chipArray =>',chipArray)
+    chipArray.push(chip);
+  }
+
+  const handleDeleteChip = (chipData, index) => {
+    chipArray.splice(index,1);
+    packageOf.splice(index,1);
+    console.log('chipArray =>',chipArray)
+  }
 
   const handleImageFile = (e) => {
     setImageFile(e.target.files[0]);
@@ -214,6 +240,14 @@ export default function NewProduct() {
               >
                   <TextField id="filled-basic" label="Description" variant="outlined" value={description} onChange={e=>setDescription(e.target.value)}fullWidth/>
               </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <ChipInput
+              value={packageOf}
+              onAdd={(chip)=>handleAddChip(chip)}
+              onDelete={(chip, index) => handleDeleteChip(chip, index)}
+              fullWidth
+            />
           </Grid>
           <Grid
               item
