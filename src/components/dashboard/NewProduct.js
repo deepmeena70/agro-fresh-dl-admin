@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
@@ -12,6 +12,8 @@ import ChipInput from 'material-ui-chip-input'
 
 
 import firebase from '../../firebase'
+import {useDispatch, useSelector} from 'react-redux';
+import {addProducts, productsSelector} from '../../features/products'
 
 
 function getModalStyle() {
@@ -39,8 +41,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const chipArray = [];
-
 export default function NewProduct() {
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
@@ -58,10 +58,13 @@ export default function NewProduct() {
   const [fruit, setFruit] = useState(false);
   const [exotic, setExotic] = useState(false);
   const [imageFile, setImageFile] = useState(null);
-  const [imageURL, setImageURL] = useState('')
+  const [imageURL, setImageURL] = useState('');
+  const [imageRef, setImageRef] = useState('');
   const [imageUploading, setImageUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
   const [packageOf, setPackageOf] = useState([]);
+
+  const dispatch = useDispatch();
 
 
   const handleOpen = () => {
@@ -83,6 +86,10 @@ export default function NewProduct() {
   };
 
   const handleSave = (e) => {
+    if(imageURL === "" || imageURL === null || imageURL === undefined) {
+      console.log('imageURL not set');
+      return;
+    }
     handleClose();
     const data = {
       productName,
@@ -95,12 +102,14 @@ export default function NewProduct() {
       vegetable,
       fruit,
       exotic,
+      packageOf,
       imageURL,
       created: firebase.firestore.FieldValue.serverTimestamp(),
       modified: firebase.firestore.FieldValue.serverTimestamp()
     }
 
     firebase.firestore().collection('products').doc().set(data)
+      .then(dispatch(addProducts(productName)));
     
   }
 
@@ -108,24 +117,9 @@ export default function NewProduct() {
     setOpen(false);
   };
 
-  const chipValue = () => {
-    return packageOf;
-  }
-
-  useEffect(() => {
-    setPackageOf(chipArray);
-  })
-
-  const handleAddChip = (chip) => {
-    console.log('chip data =>', chip);
-    console.log('chipArray =>',chipArray)
-    chipArray.push(chip);
-  }
-
-  const handleDeleteChip = (chipData, index) => {
-    chipArray.splice(index,1);
-    packageOf.splice(index,1);
-    console.log('chipArray =>',chipArray)
+  const handleChange = (chip) => {
+    console.log(chip);
+    setPackageOf(chip);
   }
 
   const handleImageFile = (e) => {
@@ -182,12 +176,12 @@ export default function NewProduct() {
     }, 
     () => {
       setImageUploading(false);
-      // Upload completed successfully, now we can get the download URL
-      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-        console.log('File available at', downloadURL);
-        setImageURL(downloadURL);
-      });
-    }
+        // Upload completed successfully, now we can get the download URL
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          console.log('File available at', downloadURL);
+          setImageURL(downloadURL);
+        });
+      }
     );
 
   }
@@ -243,9 +237,8 @@ export default function NewProduct() {
           </Grid>
           <Grid item xs={12}>
             <ChipInput
-              value={packageOf}
-              onAdd={(chip)=>handleAddChip(chip)}
-              onDelete={(chip, index) => handleDeleteChip(chip, index)}
+              defaultValue={[]}
+              onChange={(chips)=>handleChange(chips)}
               fullWidth
             />
           </Grid>

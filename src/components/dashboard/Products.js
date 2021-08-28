@@ -25,7 +25,7 @@ import firebase from '../../firebase'
 import NewProduct from './NewProduct'
 
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchProducts,deleteProducts, clearProducts, productsSelector} from '../../features/products'
+import {fetchProducts, deleteProducts, clearProducts, productsSelector} from '../../features/products'
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -57,11 +57,12 @@ const headCells = [
   { id: 'productName', numeric: false, disablePadding: true, label: 'Product Name' },
   { id: 'imageURL', numeric: false, disablePadding: false, label: 'Image' },
   { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
-  { id: 'quantity', numeric: true, disablePadding: false, label: 'Quantity' },
+  { id: 'quantity', numeric: true, disablePadding: false, label: 'Quantity (in Kg)' },
   { id: 'category', numeric: false, disablePadding: false, label: 'Category' },
   { id: 'orderType', numeric: false, disablePadding: false, label: 'Order Type' },
-  { id: 'sellingPrice', numeric: true, disablePadding: false, label: 'Selling Price' },
-  { id: 'discountPrice', numeric: true, disablePadding: false, label: 'Discount Price' },
+  { id: 'sellingPrice', numeric: true, disablePadding: false, label: 'Selling Price (in ₹/kg)' },
+  { id: 'discountPrice', numeric: true, disablePadding: false, label: 'Discount Price (in ₹/kg)' },
+  { id: 'packageOf', numeric: true, disablePadding: false, label: 'Packages (in Kg)' },
   { id: 'created', numeric: false, disablePadding: false, label: 'Created' },
   { id: 'modified', numeric: false, disablePadding: false, label: 'Modified' },
 ];
@@ -144,13 +145,26 @@ const deleteData = async (name) => {
   .collection('products');
   const snapshot = await productRef.where('productName', '==' ,name).get();
 
-
   if(snapshot.empty) {
-  console.log('no match')
-  return;
+    console.log('no match')
+    return;
   }
 
   snapshot.forEach(doc => {
+    console.log(doc.data().imageURL);
+    try{
+      const storageRef = firebase.storage().refFromURL(doc.data().imageURL);
+      if(storageRef !== null) {
+        storageRef.delete().then(() => {
+          console.log('successfully deleted')
+        }).catch(err => {
+          console.log(err);
+        });
+      }
+    } catch(e) {
+      console.log("storage ref err =>", e);
+    }
+    
     productRef.doc(doc.id).delete()
       .then(() => console.log('deleted'))
       .catch((err) => console.log(err));
@@ -190,7 +204,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Nutrition
+          Product List
         </Typography>
       )}
 
@@ -316,6 +330,10 @@ export default function Products() {
   console.log(selected);
 
   const time = (seconds, nanoseconds) => {
+    if(seconds === null) {
+      const date = new Date();
+      return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+    }
     let totalTime = (seconds+nanoseconds*0.00000001)*1000;
     const date =  new Date(totalTime);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -395,10 +413,15 @@ export default function Products() {
                         {row.discountPrice}
                       </TableCell>
                       <TableCell align="right">
-                        {time(row.created.seconds, row.created.nanoseconds)}
+                        {String(row.packageOf)}
                       </TableCell>
                       <TableCell align="right">
-                        {time(row.modified.seconds, row.modified.nanoseconds)}
+                        {row.created&&time(row.created.seconds, row.created.nanoseconds)}
+                        {!row.created && time(null)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.modified&&time(row.modified.seconds, row.modified.nanoseconds)}
+                        {!row.modified&&time(null)}
                       </TableCell>
                     </TableRow>
                   );
