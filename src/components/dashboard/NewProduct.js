@@ -59,10 +59,10 @@ export default function NewProduct() {
   const [exotic, setExotic] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imageURL, setImageURL] = useState('');
-  const [imageRef, setImageRef] = useState('');
   const [imageUploading, setImageUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
   const [packageOf, setPackageOf] = useState([]);
+  const [minOrderQty, setMinOrderQty] = useState('');
 
   const dispatch = useDispatch();
 
@@ -82,6 +82,7 @@ export default function NewProduct() {
     setExotic(false);
     setImageFile(null);
     setImageURL('');
+    setMinOrderQty('');
     setUploadProgress(null);
   };
 
@@ -103,6 +104,7 @@ export default function NewProduct() {
       fruit,
       exotic,
       packageOf,
+      minOrderQty,
       imageURL,
       created: firebase.firestore.FieldValue.serverTimestamp(),
       modified: firebase.firestore.FieldValue.serverTimestamp()
@@ -230,9 +232,15 @@ export default function NewProduct() {
               </Grid>
               <Grid 
                 item
-                xs={9}
+                xs={3}
               >
-                  <TextField id="filled-basic" label="Description" variant="outlined" value={description} onChange={e=>setDescription(e.target.value)}fullWidth/>
+                  <TextField id="filled-basic" label="Min Order Qty" variant="outlined" value={minOrderQty} onChange={e=>setMinOrderQty(e.target.value)} fullWidth/>
+              </Grid>
+              <Grid 
+                item
+                xs={6}
+              >
+                  <TextField id="filled-basic" label="Description" variant="outlined" value={description} onChange={e=>setDescription(e.target.value)} fullWidth/>
               </Grid>
           </Grid>
           <Grid item xs={12}>

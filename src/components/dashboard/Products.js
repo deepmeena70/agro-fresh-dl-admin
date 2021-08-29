@@ -63,6 +63,7 @@ const headCells = [
   { id: 'sellingPrice', numeric: true, disablePadding: false, label: 'Selling Price (in ₹/kg)' },
   { id: 'discountPrice', numeric: true, disablePadding: false, label: 'Discount Price (in ₹/kg)' },
   { id: 'packageOf', numeric: true, disablePadding: false, label: 'Packages (in Kg)' },
+  { id: 'minOrderQty', numeric: true, disablePadding: false, label: 'Min Order Qty (in Kg)' },
   { id: 'created', numeric: false, disablePadding: false, label: 'Created' },
   { id: 'modified', numeric: false, disablePadding: false, label: 'Modified' },
 ];
@@ -414,6 +415,9 @@ export default function Products() {
                       </TableCell>
                       <TableCell align="right">
                         {String(row.packageOf)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.minOrderQty}
                       </TableCell>
                       <TableCell align="right">
                         {row.created&&time(row.created.seconds, row.created.nanoseconds)}
