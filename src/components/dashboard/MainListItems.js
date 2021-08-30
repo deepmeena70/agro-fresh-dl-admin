@@ -37,12 +37,18 @@ export default function MainListItems () {
         </ListItemIcon>
         <ListItemText primary="Reports" />
       </ListItem>
-        <ListItem onClick={(e)=> {history.push("/products")}} button>
-          <ListItemIcon>
-            <LayersIcon />
-          </ListItemIcon>
-          <ListItemText primary="Products" />
-        </ListItem>
+      <ListItem onClick={(e)=> {history.push("/products")}} button>
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Products" />
+      </ListItem>
+      <ListItem onClick={(e)=> {history.push("/offers")}} button>
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Offers" />
+      </ListItem>
   </div>
   )
 }

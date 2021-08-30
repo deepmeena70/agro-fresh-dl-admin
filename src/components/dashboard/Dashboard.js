@@ -20,6 +20,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import AccountMenu from './AccountMenu'
 import Main from './Main'
 import Products from './Products'
+import Offers from './Offers'
 import MainListItems from './MainListItems'
 import SecondaryListItems from './SecondaryListItems'
 import Copyright from './Copyright'
@@ -159,6 +160,7 @@ export default function Dashboard(props) {
           {props.content === "main" && <Main />}
         {/* products */}
         { props.content === "products" && <Products />}
+        {props.content === "offers" && <Offers />}
           <Box pt={4}>
             <Copyright />
           </Box>

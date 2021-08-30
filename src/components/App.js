@@ -30,6 +30,9 @@ export default function App () {
                 <Route path="/signin" >
                     <SignIn />
                 </Route>
+                <Route path="/offers">
+                    <Dashboard content="offers"/>
+                </Route>
                 <Route path="/products" >
                     <Dashboard content="products"/>
                 </Route>
