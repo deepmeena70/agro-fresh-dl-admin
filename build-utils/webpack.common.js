@@ -1,5 +1,6 @@
 const commonPath = require('./common-paths');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+require('dotenv').config();
 
 const config = {
     entry: {
