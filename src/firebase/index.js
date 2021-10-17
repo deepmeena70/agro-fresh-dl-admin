@@ -5,14 +5,14 @@ import 'firebase/firestore'
 
 // Initialize Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyAH8YFVcIpV159rAINNWtLlmtZPs9PYReQ",
-    authDomain: "agrofresh-dl.firebaseapp.com",
-    projectId: "agrofresh-dl",
-    storageBucket: "agrofresh-dl.appspot.com",
-    messagingSenderId: "186433974952",
-    appId: "1:186433974952:web:83e8ffb34b35e8b07dc89d",
-    measurementId: "G-DMBQKLC465"
-  };
+  apiKey: "AIzaSyBblyaeA4OieOfwQxImza-bmuLvVOa_jmI",
+  authDomain: "agro-fresh-dl.firebaseapp.com",
+  projectId: "agro-fresh-dl",
+  storageBucket: "agro-fresh-dl.appspot.com",
+  messagingSenderId: "614318304032",
+  appId: "1:614318304032:web:059c6578abf52fb8138545",
+  measurementId: "G-YBHJW50DBB"
+};
 
 if(!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
