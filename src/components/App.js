@@ -36,6 +36,9 @@ export default function App () {
                 <Route path="/products" >
                     <Dashboard content="products"/>
                 </Route>
+                <Route path="/freshbasket" >
+                    <Dashboard content="freshbasket"/>
+                </Route>
                 <Route path="/">
                     <Dashboard content = "main"/>
                 </Route>

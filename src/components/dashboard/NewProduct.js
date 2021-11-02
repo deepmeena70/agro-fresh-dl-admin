@@ -91,7 +91,19 @@ export default function NewProduct() {
       console.log('imageURL not set');
       return;
     }
+
+    if(!productName
+        &&!quantity
+        &&!sellingPrice
+        &&!discountPrice
+        &&!description
+        &&(!exotic||!vegetable||!fruit)
+      ) {
+        return console.log("cannot left blank")
+      }
+
     handleClose();
+
     const data = {
       productName,
       quantity,
@@ -131,6 +143,17 @@ export default function NewProduct() {
 
   const handleUpload = (e) => {
     // Create the file metadata
+
+    if(!productName
+      &&!quantity
+      &&!sellingPrice
+      &&!discountPrice
+      &&!description
+      &&(!exotic||!vegetable||!fruit)
+    ) {
+      return console.log("cannot left blank")
+    }
+
     let metadata = {
       contentType: 'image'
     }
@@ -248,6 +271,7 @@ export default function NewProduct() {
               defaultValue={[]}
               onChange={(chips)=>handleChange(chips)}
               fullWidth
+              placeholder="Enter packages"
             />
           </Grid>
           <Grid
@@ -263,7 +287,10 @@ export default function NewProduct() {
                       label="Regular"
                       labelPlacement="start"
                       checked={regular} 
-                      onChange={e=>setRegular(e.target.checked)}
+                      onChange={e=>{
+                        setRegular(e.target.checked)
+                        setBulk(false)
+                      }}
                     />
                     <FormControlLabel
                       value="start"
@@ -271,7 +298,10 @@ export default function NewProduct() {
                       label="Bulk"
                       labelPlacement="start"
                       checked={bulk}
-                      onChange={e=>setBulk(e.target.checked)}
+                      onChange={e=>{
+                        setBulk(e.target.checked)
+                        setRegular(false)
+                      }}
                     />
                     <FormControlLabel
                       value="start"
@@ -279,7 +309,11 @@ export default function NewProduct() {
                       label="Vegetable"
                       labelPlacement="start"
                       checked={vegetable}
-                      onChange={e=>setVegetable(e.target.checked)}
+                      onChange={e=>{
+                        setVegetable(e.target.checked)
+                        setFruit(false)
+                        setExotic(false)
+                      }}
                     />
                     <FormControlLabel
                       value="start"
@@ -287,7 +321,11 @@ export default function NewProduct() {
                       label="Fruit"
                       labelPlacement="start"
                       checked={fruit}
-                      onChange={e=>setFruit(e.target.checked)}
+                      onChange={e=>{
+                          setVegetable(false)
+                          setFruit(e.target.checked)
+                          setExotic(false)
+                      }}
                     />
                     <FormControlLabel
                       value="start"
@@ -295,7 +333,11 @@ export default function NewProduct() {
                       label="Exotic"
                       labelPlacement="start"
                       checked={exotic}
-                      onChange={e=>setExotic(e.target.checked)}
+                      onChange={e=>{
+                        setVegetable(false);
+                        setFruit(false)
+                        setExotic(e.target.checked)
+                      }}
                     />
               </FormGroup>
             </Grid>
